@@ -24,9 +24,14 @@ const sse = new SSE([], {
 });
 
 app.use(cors({
-  origin: "*",
-  credentials: true
+  origin: ['https://front-bus-vercel.vercel.app', 'https://dwp-backend-bus.vercel.app/'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200
 }));
+
+
 app.use(bodyParser.json());
 
 const mongoUri = process.env.MONGO_URI;
