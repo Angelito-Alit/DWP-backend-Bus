@@ -23,25 +23,13 @@ const sse = new SSE([], {
   isSerialized: true 
 });
 
-
-const allowedOrigins = process.env.CORS_ORIGINS.split(',').map(origin => origin.trim());
-
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.indexOf(origin.replace(/\/$/, '')) !== -1) {
-      callback(null, true);
-    } else {
-      console.log('Origen bloqueado por CORS:', origin);
-      callback(new Error('No permitido por CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  optionsSuccessStatus: 200
-}));
+const allowedOrigins = process.env.CORS_ORIGINS?.split(",") || ["*"];
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
 
 
 app.use(bodyParser.json());
