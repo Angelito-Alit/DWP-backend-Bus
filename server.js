@@ -23,8 +23,10 @@ const sse = new SSE([], {
   isSerialized: true 
 });
 
+const allowedOrigins = process.env.CORS_ORIGINS.split(',');
+
 app.use(cors({
-  origin: ['https://front-bus-vercel.vercel.app', 'https://dwp-backend-bus.vercel.app/'],
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
