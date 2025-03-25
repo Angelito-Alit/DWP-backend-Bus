@@ -16,7 +16,7 @@ dotenv.config();
 mercadopago.configurations.setAccessToken(process.env.MP_ACCESS_TOKEN);
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+
 
 
 const sse = new SSE([], { 
@@ -29,16 +29,17 @@ app.use(cors({
 }));
 app.use(bodyParser.json());
 
-const mongoUri = process.env.MONGODB_URI;
+const mongoUri = process.env.MONGO_URI;
+
 mongoose.connect(mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
 .then(() => {
-  console.log('Conectado a MongoDB');
+  console.log('Conectado a MongoDB Atlas');
 })
 .catch(err => {
-  console.error('Error de conexión a MongoDB:', err);
+  console.error('Error de conexión a MongoDB Atlas:', err);
 });
 
 
@@ -113,8 +114,6 @@ const transporter = nodemailer.createTransport({
     rejectUnauthorized: false  
   }
 });
-
-
 
 const authenticateToken = (req, res, next) => {
   const token = req.header('Authorization')?.split(' ')[1];
@@ -333,7 +332,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
     user.resetPasswordExpires = resetPasswordExpires;
     await user.save();
     
-    const resetUrl = `${process.env.FRONTEND_URL }/reset-password/${resetToken}`;
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
     
     const mailOptions = {
       from: '"Bus Seat Manager" <2022371110@uteq.edu.mx>',
@@ -789,6 +788,8 @@ app.post('/api/routes', authenticateToken, async (req, res) => {
     const newRoute = new Route({
       origen,
       destino,
+      origen,
+      destino,
       fecha,
       hora,
       precio,
@@ -1011,7 +1012,12 @@ app.delete('/api/tickets/:id', authenticateToken, async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('API de Bus Seat Manager funcionando correctamente');
+  res.send('API de Bus Seat Manager funcionando correctamente con MongoDB Atlas');
+});
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Servidor ejecutándose en el puerto ${PORT}`);
 });
 
 module.exports = app;
