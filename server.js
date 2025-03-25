@@ -1015,9 +1015,5 @@ app.get('/', (req, res) => {
   res.send('API de Bus Seat Manager funcionando correctamente con MongoDB Atlas');
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Servidor ejecutándose en el puerto ${PORT}`);
-});
 
 module.exports = app;
