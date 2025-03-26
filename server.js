@@ -791,8 +791,6 @@ app.post('/api/routes', authenticateToken, async (req, res) => {
     const newRoute = new Route({
       origen,
       destino,
-      origen,
-      destino,
       fecha,
       hora,
       precio,
