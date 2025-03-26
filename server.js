@@ -34,19 +34,17 @@ app.use(
 
 app.use(bodyParser.json());
 
-const mongoUri = process.env.MONGO_URI;
-
-mongoose.connect(mongoUri, {
+const MONGODB_URI = process.env.MONGODB_URI;
+mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-})
-.then(() => {
-  console.log('Conectado a MongoDB Atlas');
-})
-.catch(err => {
-  console.error('Error de conexión a MongoDB Atlas:', err);
 });
 
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'Error de conexión a MongoDB:'));
+db.once('open', () => {
+  console.log('Conectado a MongoDB');
+});
 
 const userSchema = new mongoose.Schema({
   nombre: { type: String, required: true },
