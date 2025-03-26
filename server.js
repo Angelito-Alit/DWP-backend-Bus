@@ -411,25 +411,39 @@ app.post('/api/auth/reset-password/:token', async (req, res) => {
 
 app.get('/api/notifications/connect-sse/:token', (req, res) => {
   const token = req.params.token;
-  
+
   if (!token) {
     return res.status(401).json({ message: 'Acceso denegado' });
   }
-  
+
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       return res.status(403).json({ message: 'Token inválido' });
     }
-    
+
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
-    
+
+    // 🔹 Modifica los headers CORS para SSE
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+
     sse.init(req, res, { userId: decoded.userId });
-    
+
     res.write(`data: ${JSON.stringify({ type: 'connection', message: 'Conexión establecida' })}\n\n`);
+
+    // 🔹 Envía un "ping" cada 25 segundos para evitar que la conexión se cierre en Vercel
+    const interval = setInterval(() => {
+      res.write(`data: ${JSON.stringify({ type: 'ping', message: 'Manteniendo conexión' })}\n\n`);
+    }, 25000);
+
+    req.on('close', () => {
+      clearInterval(interval);
+    });
   });
 });
+
 
 
 
